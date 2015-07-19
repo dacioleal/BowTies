@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
@@ -17,6 +18,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
+    
+    /* Save text bow tie */
+    
+    let entity = NSEntityDescription.entityForName("Bowtie", inManagedObjectContext: managedObjectContext!)
+    
+    let bowtie = NSEntityDescription.insertNewObjectForEntityForName("Bowtie", inManagedObjectContext: managedObjectContext!) as? Bowtie
+    
+    println("\(NSBundle.mainBundle().bundlePath)")
+    
+    if bowtie != nil {
+        bowtie!.name = "My bow tie"
+        bowtie!.lastWorn = NSDate()
+    }
+    
+    var error : NSError?
+    
+    if !managedObjectContext!.save(&error) {
+        println("Could not save: \(error), \(error!.userInfo)")
+    }
+    
+    
+    let request = NSFetchRequest(entityName: "Bowtie")
+    let bowties = managedObjectContext!.executeFetchRequest(request, error: &error) as! [Bowtie]
+    
+    if bowties.count > 0 {
+        
+        let sample = bowties[0] as Bowtie
+        println("Name: \(sample.name), Worn: \(sample.lastWorn)")
+    }
+    
     return true
   }
   
