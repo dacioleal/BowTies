@@ -19,18 +19,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
     
+     println("\(NSBundle.mainBundle().bundlePath)")
+    
     /* Save text bow tie */
     
     let entity = NSEntityDescription.entityForName("Bowtie", inManagedObjectContext: managedObjectContext!)
     
-    let bowtie = NSEntityDescription.insertNewObjectForEntityForName("Bowtie", inManagedObjectContext: managedObjectContext!) as? Bowtie
+    let bowtie = Bowtie(entity: entity!, insertIntoManagedObjectContext: managedObjectContext)
     
-    println("\(NSBundle.mainBundle().bundlePath)")
+    bowtie.name = "My bow tie"
+    bowtie.lastWorn = NSDate()
     
-    if bowtie != nil {
-        bowtie!.name = "My bow tie"
-        bowtie!.lastWorn = NSDate()
-    }
     
     var error : NSError?
     
@@ -40,13 +39,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     let request = NSFetchRequest(entityName: "Bowtie")
-    let bowties = managedObjectContext!.executeFetchRequest(request, error: &error) as! [Bowtie]
+    let ties = managedObjectContext!.executeFetchRequest(request, error: nil) as! [Bowtie]
     
-    if bowties.count > 0 {
-        
-        let sample = bowties[0] as Bowtie
-        println("Name: \(sample.name), Worn: \(sample.lastWorn)")
-    }
+    
+    let sample = ties[0]
+    println("Name: \(sample.name), LastWorn: \(sample.lastWorn)")
     
     return true
   }
