@@ -19,31 +19,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
     
-     println("\(NSBundle.mainBundle().bundlePath)")
+    println("\(NSBundle.mainBundle().bundlePath)")
     
-    /* Save text bow tie */
+    let viewController = self.window!.rootViewController as! ViewController
     
-    let entity = NSEntityDescription.entityForName("Bowtie", inManagedObjectContext: managedObjectContext!)
-    
-    let bowtie = Bowtie(entity: entity!, insertIntoManagedObjectContext: managedObjectContext)
-    
-    bowtie.name = "My bow tie"
-    bowtie.lastWorn = NSDate()
-    
-    
-    var error : NSError?
-    
-    if !managedObjectContext!.save(&error) {
-        println("Could not save: \(error), \(error!.userInfo)")
-    }
-    
-    
-    let request = NSFetchRequest(entityName: "Bowtie")
-    let ties = managedObjectContext!.executeFetchRequest(request, error: nil) as! [Bowtie]
-    
-    
-    let sample = ties[0]
-    println("Name: \(sample.name), LastWorn: \(sample.lastWorn)")
+    viewController.managedContext = self.managedObjectContext
     
     return true
   }
