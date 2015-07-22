@@ -69,6 +69,27 @@ class ViewController: UIViewController {
     
     @IBAction func rate(sender: AnyObject) {
         
+        let alert = UIAlertController(title: "New Rating", message: "Rate this bow tie", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default) { (action: UIAlertAction!) -> Void in
+            
+        }
+        
+        let saveAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.Default) { (action: UIAlertAction!) -> Void in
+            
+            let textField = alert.textFields![0] as! UITextField
+            self.updateRating(textField.text)
+        }
+        
+        alert.addTextFieldWithConfigurationHandler { (textField: UITextField!) -> Void in
+            
+        }
+        
+        alert.addAction(cancelAction)
+        alert.addAction(saveAction)
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
     }
     
     //Insert sample data
@@ -117,7 +138,7 @@ class ViewController: UIViewController {
         
     }
     
-    func colorFromDict(dict: NSDictionary) -> UIColor {
+    func colorFromDict (dict: NSDictionary) -> UIColor {
         
         let red = dict["red"] as! NSNumber
         let green = dict["green"] as! NSNumber
@@ -129,7 +150,7 @@ class ViewController: UIViewController {
         
     }
     
-    func populate(bowtie: Bowtie) {
+    func populate (bowtie: Bowtie) {
         
         imageView.image = UIImage(data: bowtie.photoData)
         nameLabel.text = bowtie.name
@@ -144,6 +165,26 @@ class ViewController: UIViewController {
         favoriteLabel.hidden = !bowtie.isFavorite.boolValue
         
         view.tintColor = bowtie.tintColor as! UIColor
+    }
+    
+    func updateRating (numericString: String) {
+        
+        currentBowtie.rating = (numericString as NSString).doubleValue
+        
+        var error : NSError?
+        
+        if !managedContext.save(&error) {
+            
+            if error!.code == NSValidationNumberTooLargeError || error!.code == NSValidationNumberTooSmallError {
+                rate(currentBowtie)
+            }
+            
+            println("Could not save \(error), \(error!.userInfo)")
+            
+        } else {
+        
+            populate(currentBowtie)
+        }
     }
 }
 
