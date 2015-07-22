@@ -21,6 +21,8 @@ class ViewController: UIViewController {
     
     var managedContext : NSManagedObjectContext!
     
+    var currentBowtie: Bowtie!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -35,7 +37,10 @@ class ViewController: UIViewController {
         var results = managedContext.executeFetchRequest(request, error: &error) as? [Bowtie]
         
         if let bowties = results {
-            populate(bowties[0])
+            
+            currentBowtie = bowties[0]
+            populate(currentBowtie)
+            
         } else {
             println("Could not fetch \(error), \(error!.userInfo)")
         }
@@ -47,6 +52,18 @@ class ViewController: UIViewController {
     }
     
     @IBAction func wear(sender: AnyObject) {
+        
+        let times = currentBowtie.timesWorn.integerValue
+        currentBowtie.timesWorn = NSNumber(integer: times + 1)
+        currentBowtie.lastWorn = NSDate()
+        
+        var error : NSError?
+        
+        if !managedContext.save(&error) {
+            println("Could not save \(error), \(error!.userInfo)")
+        }
+        
+        populate(currentBowtie)
         
     }
     
