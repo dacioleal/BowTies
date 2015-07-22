@@ -26,7 +26,19 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         insertSampleData()
         
+        let request = NSFetchRequest(entityName: "Bowtie")
+        let firstTitle = segmentedControl.titleForSegmentAtIndex(0)
         
+        request.predicate = NSPredicate(format: "searchKey == %@", firstTitle!)
+        
+        var error : NSError? = nil
+        var results = managedContext.executeFetchRequest(request, error: &error) as? [Bowtie]
+        
+        if let bowties = results {
+            populate(bowties[0])
+        } else {
+            println("Could not fetch \(error), \(error!.userInfo)")
+        }
         
     }
     
@@ -99,7 +111,48 @@ class ViewController: UIViewController {
         return color
         
     }
+    
+    func populate(bowtie: Bowtie) {
+        
+        imageView.image = UIImage(data: bowtie.photoData)
+        nameLabel.text = bowtie.name
+        ratingLabel.text = "Rating: \(bowtie.rating.doubleValue)"
+        timesWornLabel.text = "# times worn: \(bowtie.timesWorn.integerValue)"
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        dateFormatter.timeStyle = NSDateFormatterStyle.NoStyle
+        
+        lastWornLabel.text = dateFormatter.stringFromDate(bowtie.lastWorn)
+        favoriteLabel.hidden = !bowtie.isFavorite.boolValue
+        
+        view.tintColor = bowtie.tintColor as! UIColor
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
